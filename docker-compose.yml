@@ -1,0 +1,15 @@
+version: "3"
+services:
+  api:
+    container_name: api-container
+    image: node:16
+    restart: always
+    working_dir: /usr/src/node-ts-template
+    command: bash -c "npm install --only=prod && npm install nodemon -D && npm run debug"
+    environment: 
+    volumes: 
+      - ./dist/:/usr/src/node-ts-template/dist/
+      - ./package.json:/usr/src/node-ts-template/package.json
+    ports:
+      - "3000:3000"
+      - "9222:9222"
