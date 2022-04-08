@@ -1,7 +1,7 @@
 {
-  "name": "node-ts-template",
+  "name": "maestro",
   "version": "1.0.0",
-  "description": "NodeJS template for building Rest APIs using Typescript, Express and Jest.",
+  "description": "",
   "author": "Stephano Balbinot",
   "license": "GPL-3.0-or-later",
   "repository": "github:sbalbinot/node-ts-template",
