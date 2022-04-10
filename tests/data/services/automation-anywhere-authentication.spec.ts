@@ -1,13 +1,14 @@
 import { AuthenticationError } from '@/domain/errors'
 import { AutomationAnywhereAuthenticationService } from '@/data/services'
 import { LoadAutomationAnywhereUserApi } from '@/data/contracts/apis'
-import { LoadUserAccountRepository } from '@/data/contracts/repos'
+import { CreateAutomationAnywhereAccountRepository, LoadUserAccountRepository } from '@/data/contracts/repos'
 
 import { mock, MockProxy } from 'jest-mock-extended'
 
 describe('AutomationAnywhereAuthenticationService', () => {
   let loadAutomationAnywhereUserApi: MockProxy<LoadAutomationAnywhereUserApi>
   let loadUserAccountRepo: MockProxy<LoadUserAccountRepository>
+  let createAutomationAnywhereAccountRepo: MockProxy<CreateAutomationAnywhereAccountRepository>
   let sut: AutomationAnywhereAuthenticationService
   const token = 'any_token'
 
@@ -19,7 +20,8 @@ describe('AutomationAnywhereAuthenticationService', () => {
       email: 'any_aa_email'
     })
     loadUserAccountRepo = mock()
-    sut = new AutomationAnywhereAuthenticationService(loadAutomationAnywhereUserApi, loadUserAccountRepo)
+    createAutomationAnywhereAccountRepo = mock()
+    sut = new AutomationAnywhereAuthenticationService(loadAutomationAnywhereUserApi, loadUserAccountRepo, createAutomationAnywhereAccountRepo)
   })
 
   it('should call LoadAutomationAnywhereUserApi with correct params', async () => {
@@ -42,5 +44,14 @@ describe('AutomationAnywhereAuthenticationService', () => {
 
     expect(loadUserAccountRepo.load).toHaveBeenCalledWith({ email: 'any_aa_email' })
     expect(loadUserAccountRepo.load).toHaveBeenCalledTimes(1)
+  })
+
+  it('should call CreateUserAccountRepo when LoadUserAccountRepo returns undefined', async () => {
+    loadUserAccountRepo.load.mockResolvedValueOnce(undefined)
+
+    await sut.perform({ token })
+
+    expect(createAutomationAnywhereAccountRepo.createFromAutomationAnywhere).toHaveBeenCalledWith({ automationAnywhereId: 'any_aa_id', email: 'any_aa_email', name: 'any_aa_name' })
+    expect(createAutomationAnywhereAccountRepo.createFromAutomationAnywhere).toHaveBeenCalledTimes(1)
   })
 })
