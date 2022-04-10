@@ -1,11 +1,12 @@
 import { AuthenticationError } from '@/domain/errors'
 import { AutomationAnywhereAuthenticationService } from '@/data/services'
+import { LoadAutomationAnywhereUserApi } from '@/data/contracts/apis'
+
+import { mock } from 'jest-mock-extended'
 
 describe('AutomationAnywhereAuthenticationService', () => {
   it('should call LoadAutomationAnywhereUserApi with correct params', async () => {
-    const loadAutomationAnywhereUserApi = {
-      load: jest.fn()
-    }
+    const loadAutomationAnywhereUserApi = mock<LoadAutomationAnywhereUserApi>()
     const sut = new AutomationAnywhereAuthenticationService(loadAutomationAnywhereUserApi)
 
     await sut.perform({ token: 'any_token' })
@@ -15,9 +16,7 @@ describe('AutomationAnywhereAuthenticationService', () => {
   })
 
   it('should return AuthenticationError when LoadAutomationAnywhereUserApi returns undefined', async () => {
-    const loadAutomationAnywhereUserApi = {
-      load: jest.fn()
-    }
+    const loadAutomationAnywhereUserApi = mock<LoadAutomationAnywhereUserApi>()
     loadAutomationAnywhereUserApi.load.mockResolvedValueOnce(undefined)
     const sut = new AutomationAnywhereAuthenticationService(loadAutomationAnywhereUserApi)
 
