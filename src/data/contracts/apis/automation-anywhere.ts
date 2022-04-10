@@ -7,5 +7,9 @@ export namespace LoadAutomationAnywhereUserApi {
     token: string
   }
 
-  export type Result = undefined
+  export type Result = undefined | {
+    automationAnywhereId: string
+    name: string
+    email: string
+  }
 }
