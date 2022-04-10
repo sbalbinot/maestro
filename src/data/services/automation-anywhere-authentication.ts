@@ -13,10 +13,10 @@ export class AutomationAnywhereAuthenticationService {
     const aaData = await this.automationAnywhereApi.loadUser(params)
     if (aaData !== undefined) {
       const accountData = await this.userAccountRepo.load({ email: aaData.email })
-      if (accountData?.name !== undefined) {
+      if (accountData !== undefined) {
         await this.userAccountRepo.updateWithAutomationAnywhere({
           id: accountData.id,
-          name: accountData.name,
+          name: accountData.name ?? aaData.name,
           automationAnywhereId: aaData.automationAnywhereId
         })
       } else {

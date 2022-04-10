@@ -19,6 +19,7 @@ describe('AutomationAnywhereAuthenticationService', () => {
       email: 'any_aa_email'
     })
     userAccountRepo = mock()
+    userAccountRepo.load.mockResolvedValue(undefined)
     sut = new AutomationAnywhereAuthenticationService(automationAnywhereApi, userAccountRepo)
   })
 
@@ -45,8 +46,6 @@ describe('AutomationAnywhereAuthenticationService', () => {
   })
 
   it('should call CreateAutomationAnywhereAccountRepo when LoadUserAccountRepo returns undefined', async () => {
-    userAccountRepo.load.mockResolvedValueOnce(undefined)
-
     await sut.perform({ token })
 
     expect(userAccountRepo.createFromAutomationAnywhere).toHaveBeenCalledWith({
@@ -68,6 +67,21 @@ describe('AutomationAnywhereAuthenticationService', () => {
     expect(userAccountRepo.updateWithAutomationAnywhere).toHaveBeenCalledWith({
       id: 'any_id',
       name: 'any_name',
+      automationAnywhereId: 'any_aa_id'
+    })
+    expect(userAccountRepo.updateWithAutomationAnywhere).toHaveBeenCalledTimes(1)
+  })
+
+  it('should update account name', async () => {
+    userAccountRepo.load.mockResolvedValueOnce({
+      id: 'any_id'
+    })
+
+    await sut.perform({ token })
+
+    expect(userAccountRepo.updateWithAutomationAnywhere).toHaveBeenCalledWith({
+      id: 'any_id',
+      name: 'any_aa_name',
       automationAnywhereId: 'any_aa_id'
     })
     expect(userAccountRepo.updateWithAutomationAnywhere).toHaveBeenCalledTimes(1)
