@@ -1,14 +1,6 @@
 import { AuthenticationError } from '@/domain/errors'
-import { AutomationAnywhereAuthentication } from '@/domain/features'
+import { AutomationAnywhereAuthenticationService } from '@/data/services'
 import { LoadAutomationAnywhereUserApi } from '@/data/contracts/apis'
-
-class AutomationAnywhereAuthenticationService {
-  constructor(private readonly loadAutomationAnywhereUserApi: LoadAutomationAnywhereUserApi) {}
-  async perform (params: AutomationAnywhereAuthentication.Params): Promise<AuthenticationError> {
-    await this.loadAutomationAnywhereUserApi.load(params)
-    return new AuthenticationError()
-  }
-}
 
 class LoadAutomationAnywhereUserApiSpy implements LoadAutomationAnywhereUserApi {
   token?: string
