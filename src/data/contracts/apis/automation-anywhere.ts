@@ -8,8 +8,8 @@ export namespace LoadAutomationAnywhereUserApi {
   }
 
   export type Result = undefined | {
-    automationAnywhereId: string
     name: string
     email: string
+    automationAnywhereId: string
   }
 }

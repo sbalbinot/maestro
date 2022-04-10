@@ -13,26 +13,15 @@ export namespace LoadUserAccountRepository {
   }
 }
 
-export interface CreateAutomationAnywhereAccountRepository {
-  createFromAutomationAnywhere: (params: LoadUserAccountRepository.Params) => Promise<void>
+export interface SaveAutomationAnywhereAccountRepository {
+  saveWithAutomationAnywhere: (params: SaveAutomationAnywhereAccountRepository.Params) => Promise<void>
 }
 
-export namespace CreateAutomationAnywhereAccountRepository {
+export namespace SaveAutomationAnywhereAccountRepository {
   export type Params = {
-    automationAnywhereId: string
+    id?: string
+    name: string
     email: string
-    name: string
-  }
-}
-
-export interface UpdateAutomationAnywhereAccountRepository {
-  updateWithAutomationAnywhere: (params: UpdateAutomationAnywhereAccountRepository.Params) => Promise<void>
-}
-
-export namespace UpdateAutomationAnywhereAccountRepository {
-  export type Params = {
-    id: string
-    name: string
     automationAnywhereId: string
   }
 }
