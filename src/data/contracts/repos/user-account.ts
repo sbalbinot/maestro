@@ -7,7 +7,10 @@ export namespace LoadUserAccountRepository {
     email: string
   }
 
-  export type Result = undefined
+  export type Result = undefined | {
+    id: string
+    name?: string
+  }
 }
 
 export interface CreateAutomationAnywhereAccountRepository {
@@ -20,5 +23,16 @@ export namespace CreateAutomationAnywhereAccountRepository {
     email: string
     name: string
   }
+}
 
+export interface UpdateAutomationAnywhereAccountRepository {
+  updateWithAutomationAnywhere: (params: UpdateAutomationAnywhereAccountRepository.Params) => Promise<void>
+}
+
+export namespace UpdateAutomationAnywhereAccountRepository {
+  export type Params = {
+    id: string
+    name: string
+    automationAnywhereId: string
+  }
 }

@@ -1,13 +1,13 @@
 import { AuthenticationError } from '@/domain/errors'
 import { AutomationAnywhereAuthenticationService } from '@/data/services'
 import { LoadAutomationAnywhereUserApi } from '@/data/contracts/apis'
-import { CreateAutomationAnywhereAccountRepository, LoadUserAccountRepository } from '@/data/contracts/repos'
+import { CreateAutomationAnywhereAccountRepository, LoadUserAccountRepository, UpdateAutomationAnywhereAccountRepository } from '@/data/contracts/repos'
 
 import { mock, MockProxy } from 'jest-mock-extended'
 
 describe('AutomationAnywhereAuthenticationService', () => {
   let automationAnywhereApi: MockProxy<LoadAutomationAnywhereUserApi>
-  let userAccountRepo: MockProxy<CreateAutomationAnywhereAccountRepository & LoadUserAccountRepository>
+  let userAccountRepo: MockProxy<CreateAutomationAnywhereAccountRepository & LoadUserAccountRepository & UpdateAutomationAnywhereAccountRepository>
   let sut: AutomationAnywhereAuthenticationService
   const token = 'any_token'
 
@@ -44,12 +44,32 @@ describe('AutomationAnywhereAuthenticationService', () => {
     expect(userAccountRepo.load).toHaveBeenCalledTimes(1)
   })
 
-  it('should call CreateUserAccountRepo when LoadUserAccountRepo returns undefined', async () => {
+  it('should call CreateAutomationAnywhereAccountRepo when LoadUserAccountRepo returns undefined', async () => {
     userAccountRepo.load.mockResolvedValueOnce(undefined)
 
     await sut.perform({ token })
 
-    expect(userAccountRepo.createFromAutomationAnywhere).toHaveBeenCalledWith({ automationAnywhereId: 'any_aa_id', email: 'any_aa_email', name: 'any_aa_name' })
+    expect(userAccountRepo.createFromAutomationAnywhere).toHaveBeenCalledWith({
+      automationAnywhereId: 'any_aa_id',
+      email: 'any_aa_email',
+      name: 'any_aa_name'
+    })
     expect(userAccountRepo.createFromAutomationAnywhere).toHaveBeenCalledTimes(1)
+  })
+
+  it('should call UpdateAutomationAnywhereAccountRepo when LoadUserAccountRepo returns data', async () => {
+    userAccountRepo.load.mockResolvedValueOnce({
+      id: 'any_id',
+      name: 'any_name'
+    })
+
+    await sut.perform({ token })
+
+    expect(userAccountRepo.updateWithAutomationAnywhere).toHaveBeenCalledWith({
+      id: 'any_id',
+      name: 'any_name',
+      automationAnywhereId: 'any_aa_id'
+    })
+    expect(userAccountRepo.updateWithAutomationAnywhere).toHaveBeenCalledTimes(1)
   })
 })
