@@ -1,5 +1,5 @@
 export interface LoadAutomationAnywhereUserApi {
-  load: (params: LoadAutomationAnywhereUserApi.Params) => Promise<LoadAutomationAnywhereUserApi.Result>
+  loadUser: (params: LoadAutomationAnywhereUserApi.Params) => Promise<LoadAutomationAnywhereUserApi.Result>
 }
 
 export namespace LoadAutomationAnywhereUserApi {

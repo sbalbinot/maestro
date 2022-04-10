@@ -13,7 +13,7 @@ describe('AutomationAnywhereAuthenticationService', () => {
 
   beforeEach(() => {
     automationAnywhereApi = mock()
-    automationAnywhereApi.load.mockResolvedValue({
+    automationAnywhereApi.loadUser.mockResolvedValue({
       automationAnywhereId: 'any_aa_id',
       name: 'any_aa_name',
       email: 'any_aa_email'
@@ -25,12 +25,12 @@ describe('AutomationAnywhereAuthenticationService', () => {
   it('should call LoadAutomationAnywhereUserApi with correct params', async () => {
     await sut.perform({ token })
 
-    expect(automationAnywhereApi.load).toHaveBeenCalledWith({ token })
-    expect(automationAnywhereApi.load).toHaveBeenCalledTimes(1)
+    expect(automationAnywhereApi.loadUser).toHaveBeenCalledWith({ token })
+    expect(automationAnywhereApi.loadUser).toHaveBeenCalledTimes(1)
   })
 
   it('should return AuthenticationError when LoadAutomationAnywhereUserApi returns undefined', async () => {
-    automationAnywhereApi.load.mockResolvedValueOnce(undefined)
+    automationAnywhereApi.loadUser.mockResolvedValueOnce(undefined)
 
     const authResult = await sut.perform({ token })
 

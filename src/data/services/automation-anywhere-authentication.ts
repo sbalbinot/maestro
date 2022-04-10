@@ -10,7 +10,7 @@ export class AutomationAnywhereAuthenticationService {
   ) {}
 
   async perform (params: AutomationAnywhereAuthentication.Params): Promise<AuthenticationError> {
-    const aaData = await this.automationAnywhereApi.load(params)
+    const aaData = await this.automationAnywhereApi.loadUser(params)
     if (aaData !== undefined) {
       await this.userAccountRepo.load({ email: aaData.email })
       await this.userAccountRepo.createFromAutomationAnywhere(aaData)
