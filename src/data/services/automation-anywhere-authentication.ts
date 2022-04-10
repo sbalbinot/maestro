@@ -2,6 +2,7 @@ import { LoadAutomationAnywhereUserApi } from '@/data/contracts/apis'
 import { LoadUserAccountRepository, SaveAutomationAnywhereAccountRepository } from '@/data/contracts/repos'
 import { AuthenticationError } from '@/domain/errors'
 import { AutomationAnywhereAuthentication } from '@/domain/features'
+import { AutomationAnywhereAccount } from '@/domain/models'
 
 export class AutomationAnywhereAuthenticationService {
   constructor (
@@ -13,12 +14,8 @@ export class AutomationAnywhereAuthenticationService {
     const aaData = await this.automationAnywhereApi.loadUser(params)
     if (aaData !== undefined) {
       const accountData = await this.userAccountRepo.load({ email: aaData.email })
-      await this.userAccountRepo.saveWithAutomationAnywhere({
-        id: accountData?.id,
-        name: accountData?.name ?? aaData.name,
-        email: aaData.email,
-        automationAnywhereId: aaData.automationAnywhereId
-      })
+      const aaAccount = new AutomationAnywhereAccount(aaData, accountData)
+      await this.userAccountRepo.saveWithAutomationAnywhere(aaAccount)
     }
     return new AuthenticationError()
   }
