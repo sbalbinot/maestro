@@ -5,7 +5,7 @@ export interface AutomationAnywhereAuthentication {
   perform: (params: AutomationAnywhereAuthentication.Params) => Promise<AutomationAnywhereAuthentication.Result>
 }
 
-namespace AutomationAnywhereAuthentication {
+export namespace AutomationAnywhereAuthentication {
   export type Params = {
     token: string
   }
