@@ -11,13 +11,14 @@ import { mock, MockProxy } from 'jest-mock-extended'
 jest.mock('@/domain/models/automation-anywhere-account')
 
 describe('AutomationAnywhereAuthenticationService', () => {
+  let token: string
   let automationAnywhereApi: MockProxy<LoadAutomationAnywhereUserApi>
   let crypto: MockProxy<TokenGenerator>
   let userAccountRepo: MockProxy<LoadUserAccountRepository & SaveAutomationAnywhereAccountRepository>
   let sut: AutomationAnywhereAuthenticationService
-  const token = 'any_token'
 
-  beforeEach(() => {
+  beforeAll(() => {
+    token = 'any_token'
     automationAnywhereApi = mock()
     automationAnywhereApi.loadUser.mockResolvedValue({
       name: 'any_aa_name',
@@ -29,6 +30,9 @@ describe('AutomationAnywhereAuthenticationService', () => {
     userAccountRepo.saveWithAutomationAnywhere.mockResolvedValue({ id: 'any_account_id' })
     crypto = mock()
     crypto.generateToken.mockResolvedValue('any_generated_token')
+  })
+
+  beforeEach(() => {
     sut = new AutomationAnywhereAuthenticationService(automationAnywhereApi, userAccountRepo, crypto)
   })
 
