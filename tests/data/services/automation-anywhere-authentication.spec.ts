@@ -26,7 +26,7 @@ describe('AutomationAnywhereAuthenticationService', () => {
     })
     userAccountRepo = mock()
     userAccountRepo.load.mockResolvedValue(undefined)
-    userAccountRepo.saveWithAutomationAnywhere.mockResolvedValueOnce({ id: 'any_account_id' })
+    userAccountRepo.saveWithAutomationAnywhere.mockResolvedValue({ id: 'any_account_id' })
     crypto = mock()
     crypto.generateToken.mockResolvedValue('any_generated_token')
     sut = new AutomationAnywhereAuthenticationService(automationAnywhereApi, userAccountRepo, crypto)
@@ -80,5 +80,37 @@ describe('AutomationAnywhereAuthenticationService', () => {
     const authResult = await sut.perform({ token })
 
     expect(authResult).toEqual(new AccessToken('any_generated_token'))
+  })
+
+  it('should rethrow if LoadAutomationAnywhereUserApi throws', async () => {
+    automationAnywhereApi.loadUser.mockRejectedValueOnce(new Error('aa_error'))
+
+    const promise = sut.perform({ token })
+
+    await expect(promise).rejects.toThrow(new Error('aa_error'))
+  })
+
+  it('should rethrow if LoadUserAccountRepository throws', async () => {
+    userAccountRepo.load.mockRejectedValueOnce(new Error('load_error'))
+
+    const promise = sut.perform({ token })
+
+    await expect(promise).rejects.toThrow(new Error('load_error'))
+  })
+
+  it('should rethrow if SaveAutomationAnywhereAccountRepository throws', async () => {
+    userAccountRepo.saveWithAutomationAnywhere.mockRejectedValueOnce(new Error('save_error'))
+
+    const promise = sut.perform({ token })
+
+    await expect(promise).rejects.toThrow(new Error('save_error'))
+  })
+
+  it('should rethrow if TokenGenerator throws', async () => {
+    crypto.generateToken.mockRejectedValueOnce(new Error('generate_error'))
+
+    const promise = sut.perform({ token })
+
+    await expect(promise).rejects.toThrow(new Error('generate_error'))
   })
 })
