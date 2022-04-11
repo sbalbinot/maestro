@@ -14,7 +14,7 @@ export namespace LoadUserAccountRepository {
 }
 
 export interface SaveAutomationAnywhereAccountRepository {
-  saveWithAutomationAnywhere: (params: SaveAutomationAnywhereAccountRepository.Params) => Promise<void>
+  saveWithAutomationAnywhere: (params: SaveAutomationAnywhereAccountRepository.Params) => Promise<SaveAutomationAnywhereAccountRepository.Result>
 }
 
 export namespace SaveAutomationAnywhereAccountRepository {
@@ -23,5 +23,9 @@ export namespace SaveAutomationAnywhereAccountRepository {
     name: string
     email: string
     automationAnywhereId: string
+  }
+
+  export type Result = {
+    id: string
   }
 }

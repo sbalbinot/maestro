@@ -2,6 +2,7 @@ import { AuthenticationError } from '@/domain/errors'
 import { AutomationAnywhereAuthenticationService } from '@/data/services'
 import { LoadAutomationAnywhereUserApi } from '@/data/contracts/apis'
 import { LoadUserAccountRepository, SaveAutomationAnywhereAccountRepository } from '@/data/contracts/repos'
+import { TokenGenerator } from '@/data/contracts/crypto'
 import { AutomationAnywhereAccount } from '@/domain/models'
 
 import { mocked } from 'jest-mock'
@@ -11,6 +12,7 @@ jest.mock('@/domain/models/automation-anywhere-account')
 
 describe('AutomationAnywhereAuthenticationService', () => {
   let automationAnywhereApi: MockProxy<LoadAutomationAnywhereUserApi>
+  let crypto: MockProxy<TokenGenerator>
   let userAccountRepo: MockProxy<LoadUserAccountRepository & SaveAutomationAnywhereAccountRepository>
   let sut: AutomationAnywhereAuthenticationService
   const token = 'any_token'
@@ -24,7 +26,9 @@ describe('AutomationAnywhereAuthenticationService', () => {
     })
     userAccountRepo = mock()
     userAccountRepo.load.mockResolvedValue(undefined)
-    sut = new AutomationAnywhereAuthenticationService(automationAnywhereApi, userAccountRepo)
+    userAccountRepo.saveWithAutomationAnywhere.mockResolvedValueOnce({ id: 'any_account_id' })
+    crypto = mock()
+    sut = new AutomationAnywhereAuthenticationService(automationAnywhereApi, userAccountRepo, crypto)
   })
 
   it('should call LoadAutomationAnywhereUserApi with correct params', async () => {
@@ -59,5 +63,12 @@ describe('AutomationAnywhereAuthenticationService', () => {
 
     expect(userAccountRepo.saveWithAutomationAnywhere).toHaveBeenCalledWith({ any: 'any' })
     expect(userAccountRepo.saveWithAutomationAnywhere).toHaveBeenCalledTimes(1)
+  })
+
+  it('should call TokenGenerator with correct params', async () => {
+    await sut.perform({ token })
+
+    expect(crypto.generateToken).toHaveBeenCalledWith({ key: 'any_account_id' })
+    expect(crypto.generateToken).toHaveBeenCalledTimes(1)
   })
 })
