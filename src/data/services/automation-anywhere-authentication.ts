@@ -3,7 +3,7 @@ import { LoadUserAccountRepository, SaveAutomationAnywhereAccountRepository } fr
 import { TokenGenerator } from '@/data/contracts/crypto'
 import { AuthenticationError } from '@/domain/errors'
 import { AutomationAnywhereAuthentication } from '@/domain/features'
-import { AutomationAnywhereAccount } from '@/domain/models'
+import { AccessToken, AutomationAnywhereAccount } from '@/domain/models'
 
 export class AutomationAnywhereAuthenticationService {
   constructor (
@@ -18,7 +18,7 @@ export class AutomationAnywhereAuthenticationService {
       const accountData = await this.userAccountRepo.load({ email: aaData.email })
       const aaAccount = new AutomationAnywhereAccount(aaData, accountData)
       const { id } = await this.userAccountRepo.saveWithAutomationAnywhere(aaAccount)
-      await this.crypto.generateToken({ key: id })
+      await this.crypto.generateToken({ key: id, expirationInMs: AccessToken.expirationInMs })
     }
     return new AuthenticationError()
   }

@@ -3,7 +3,7 @@ import { AutomationAnywhereAuthenticationService } from '@/data/services'
 import { LoadAutomationAnywhereUserApi } from '@/data/contracts/apis'
 import { LoadUserAccountRepository, SaveAutomationAnywhereAccountRepository } from '@/data/contracts/repos'
 import { TokenGenerator } from '@/data/contracts/crypto'
-import { AutomationAnywhereAccount } from '@/domain/models'
+import { AccessToken, AutomationAnywhereAccount } from '@/domain/models'
 
 import { mocked } from 'jest-mock'
 import { mock, MockProxy } from 'jest-mock-extended'
@@ -68,7 +68,10 @@ describe('AutomationAnywhereAuthenticationService', () => {
   it('should call TokenGenerator with correct params', async () => {
     await sut.perform({ token })
 
-    expect(crypto.generateToken).toHaveBeenCalledWith({ key: 'any_account_id' })
+    expect(crypto.generateToken).toHaveBeenCalledWith({
+      key: 'any_account_id',
+      expirationInMs: AccessToken.expirationInMs
+    })
     expect(crypto.generateToken).toHaveBeenCalledTimes(1)
   })
 })
