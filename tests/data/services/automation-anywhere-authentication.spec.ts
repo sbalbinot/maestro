@@ -2,8 +2,12 @@ import { AuthenticationError } from '@/domain/errors'
 import { AutomationAnywhereAuthenticationService } from '@/data/services'
 import { LoadAutomationAnywhereUserApi } from '@/data/contracts/apis'
 import { LoadUserAccountRepository, SaveAutomationAnywhereAccountRepository } from '@/data/contracts/repos'
+import { AutomationAnywhereAccount } from '@/domain/models'
 
+import { mocked } from 'jest-mock'
 import { mock, MockProxy } from 'jest-mock-extended'
+
+jest.mock('@/domain/models/automation-anywhere-account')
 
 describe('AutomationAnywhereAuthenticationService', () => {
   let automationAnywhereApi: MockProxy<LoadAutomationAnywhereUserApi>
@@ -45,47 +49,15 @@ describe('AutomationAnywhereAuthenticationService', () => {
     expect(userAccountRepo.load).toHaveBeenCalledTimes(1)
   })
 
-  it('should create account with automation anywhere data', async () => {
-    await sut.perform({ token })
-
-    expect(userAccountRepo.saveWithAutomationAnywhere).toHaveBeenCalledWith({
-      name: 'any_aa_name',
-      email: 'any_aa_email',
-      automationAnywhereId: 'any_aa_id'
-    })
-    expect(userAccountRepo.saveWithAutomationAnywhere).toHaveBeenCalledTimes(1)
-  })
-
-  it('should not update account name', async () => {
-    userAccountRepo.load.mockResolvedValueOnce({
-      id: 'any_id',
-      name: 'any_name'
-    })
+  it('should call SaveAutomationAnywhereAccountRepository with AutomationAnywhereAccount', async () => {
+    const AutomationAnywhereStub = jest.fn().mockImplementation(() => ({
+      any: 'any'
+    }))
+    mocked(AutomationAnywhereAccount).mockImplementation(AutomationAnywhereStub)
 
     await sut.perform({ token })
 
-    expect(userAccountRepo.saveWithAutomationAnywhere).toHaveBeenCalledWith({
-      id: 'any_id',
-      name: 'any_name',
-      email: 'any_aa_email',
-      automationAnywhereId: 'any_aa_id'
-    })
-    expect(userAccountRepo.saveWithAutomationAnywhere).toHaveBeenCalledTimes(1)
-  })
-
-  it('should update account name', async () => {
-    userAccountRepo.load.mockResolvedValueOnce({
-      id: 'any_id'
-    })
-
-    await sut.perform({ token })
-
-    expect(userAccountRepo.saveWithAutomationAnywhere).toHaveBeenCalledWith({
-      id: 'any_id',
-      name: 'any_aa_name',
-      email: 'any_aa_email',
-      automationAnywhereId: 'any_aa_id'
-    })
+    expect(userAccountRepo.saveWithAutomationAnywhere).toHaveBeenCalledWith({ any: 'any' })
     expect(userAccountRepo.saveWithAutomationAnywhere).toHaveBeenCalledTimes(1)
   })
 })
